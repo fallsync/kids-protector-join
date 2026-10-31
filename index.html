@@ -4,7 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>KIDS PROTECTOR — association</title>
+<title>KIDS PROTECTOR — Ton parent t’invite 🛡️</title>
+<meta name="description" content="Ton parent t’invite à activer KIDS PROTECTOR sur ton téléphone. Un seul bouton : l’application s’installe et se connecte automatiquement.">
+<meta name="theme-color" content="#0b6e4f">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="KIDS PROTECTOR">
+<meta property="og:title" content="Ton parent t’invite 🛡️">
+<meta property="og:description" content="Active KIDS PROTECTOR sur ton téléphone : un seul bouton, c’est automatique.">
+<meta property="og:image" content="https://fallsync.github.io/kids-protector-join/preview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://fallsync.github.io/kids-protector-join/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🛡️%3C/text%3E%3C/svg%3E">
 <style>
   :root { color-scheme: light dark; --bg:#f4f8fb; --card:#fff; --ink:#12263a; --muted:#5b6b7b; --accent:#0b6e4f; --line:#d5dee6; }
   @media (prefers-color-scheme: dark) { :root { --bg:#0e1720; --card:#16222e; --ink:#eaf1f7; --muted:#9db0c2; --accent:#3ecf8e; --line:#2a3a4a; } }
@@ -19,13 +31,21 @@
   a.link { display:block; text-align:center; margin-top:14px; color:var(--accent); }
   ol { padding-inline-start:20px; line-height:1.55; }
   .warn { color:#b3261e; }
+  .hero { text-align:center; padding-top:8px; }
+  .hero svg { width:76px; height:76px; }
+  .brand { font-weight:800; letter-spacing:.06em; color:var(--accent); font-size:.95rem; margin-top:6px; }
+  .hero h1 { font-size:1.5rem; }
   [hidden] { display:none !important; }
 </style>
 </head>
 <body>
 <main>
-  <h1 id="title"></h1>
-  <p id="intro" class="muted"></p>
+  <div class="hero">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 4 8 13v18c0 15 10 25.5 24 29 14-3.500 24-14 24-29V13z" fill="#0b6e4f"/><path d="M32 10.500 13.500 17.500V31c0 11.500 7.500 20 18.500 23.500C43 51 50.500 42.500 50.500 31V17.500z" fill="#12a37a"/><path d="m22 32 7 7 14-15" fill="none" stroke="#fff" stroke-width="5.500" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="brand">KIDS PROTECTOR</div>
+    <h1 id="title"></h1>
+    <p id="intro" class="muted"></p>
+  </div>
   <div class="card">
     <div id="codeBox" class="code" hidden></div>
     <p id="noCode" class="warn" hidden></p>
@@ -40,6 +60,7 @@
   <p id="privacy" class="muted"></p>
 </main>
 <script>
+// --- logique pure (testée par tools/test_join_page.mjs) ---
 function parseCode(hash) {
   var text = '';
   try { text = decodeURIComponent(String(hash || '')); } catch (e) { text = String(hash || ''); }
@@ -69,17 +90,18 @@ function pickLang(language) {
   var l = String(language || 'fr').slice(0, 2).toLowerCase();
   return l === 'ar' || l === 'en' ? l : 'fr';
 }
+// --- fin logique pure ---
 
 var T = {
-  fr: { title: "Associer ce téléphone à tes parents", intro: "Un seul bouton : il télécharge KIDS PROTECTOR et prépare l'association avec le code de tes parents.",
+  fr: { title: "Ton parent t’invite 🛡️", intro: "Un seul bouton : l’application s’installe et se connecte automatiquement à ton parent.",
     go: "Installer et associer", dl: "Télécharger seulement l'application", noCode: "Ce lien ne contient pas de code. Demande à ton parent de te renvoyer le lien depuis l'application.",
     stepsTitle: "Ce qui va se passer", steps: ["Appuie sur le bouton vert : le code est copié et le téléchargement commence.", "Ouvre le fichier téléchargé et accepte l'installation (Android peut demander d'autoriser ce navigateur à installer des applications).", "Ouvre KIDS PROTECTOR : appuie sur « Accepter » pour terminer l'association."],
     copied: "Code copié. Téléchargement en cours…", androidOnly: "Ouvre ce lien depuis le téléphone Android de l'enfant.", privacy: "Le code reste dans ton téléphone : il n'est pas envoyé à ce site.", prep: "Préparation…" },
-  en: { title: "Pair this phone with your parents", intro: "One button: it downloads KIDS PROTECTOR and prepares pairing with your parent's code.",
+  en: { title: "Your parent invites you 🛡️", intro: "One button: the app installs and connects to your parent automatically.",
     go: "Install and pair", dl: "Only download the app", noCode: "This link has no code. Ask your parent to send the link again from the app.",
     stepsTitle: "What will happen", steps: ["Tap the green button: the code is copied and the download starts.", "Open the downloaded file and allow the installation (Android may ask you to allow this browser to install apps).", "Open KIDS PROTECTOR and tap “Accept” to finish pairing."],
     copied: "Code copied. Downloading…", androidOnly: "Open this link on the child's Android phone.", privacy: "The code stays on your phone: it is not sent to this site.", prep: "Preparing…" },
-  ar: { title: "اربط هذا الهاتف بوالديك", intro: "زر واحد: يحمّل KIDS PROTECTOR ويجهّز الربط برمز والدك.",
+  ar: { title: "والدك يدعوك 🛡️", intro: "زر واحد: يُثبَّت التطبيق ويرتبط بوالدك تلقائياً.",
     go: "تثبيت وربط", dl: "تحميل التطبيق فقط", noCode: "هذا الرابط لا يحتوي على رمز. اطلب من والدك إرسال الرابط من التطبيق.",
     stepsTitle: "ما الذي سيحدث", steps: ["اضغط الزر الأخضر: يُنسخ الرمز ويبدأ التحميل.", "افتح الملف الذي تم تحميله ووافق على التثبيت (قد يطلب أندرويد السماح لهذا المتصفح بتثبيت التطبيقات).", "افتح KIDS PROTECTOR واضغط «قبول» لإنهاء الربط."],
     copied: "تم نسخ الرمز. جارٍ التحميل…", androidOnly: "افتح هذا الرابط من هاتف الطفل (أندرويد).", privacy: "يبقى الرمز على هاتفك ولا يُرسل إلى هذا الموقع.", prep: "جارٍ التحضير…" },
@@ -101,7 +123,7 @@ var T = {
   var isAndroid = /android/i.test(navigator.userAgent);
 
   if (!code) { $('noCode').textContent = t.noCode; $('noCode').hidden = false; $('go').hidden = true; }
-  else { $('codeBox').textContent = code; $('codeBox').hidden = false; }
+  // Le code reste dans le lien : il n'est pas affiché (message rassurant, pas de jargon).
 
   if (repo) {
     $('status').textContent = t.prep;
@@ -126,6 +148,7 @@ var T = {
     if (!isAndroid) { $('status').textContent = t.androidOnly; return; }
     copy(clipboardText(code)).then(function () {
       $('status').textContent = t.copied;
+      // Application déjà installée : elle s'ouvre avec le code. Sinon : téléchargement de l'application.
       location.href = buildIntentUrl(code, apkUrl || location.href);
     });
   });
