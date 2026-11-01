@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>KIDS PROTECTOR — Ton parent t’invite 🛡️</title>
-<meta name="description" content="Ton parent t’invite à activer KIDS PROTECTOR sur ton téléphone. Un seul bouton : l’application s’installe et se connecte automatiquement.">
+<meta name="description" content="Ton parent t’invite à activer KIDS PROTECTOR sur ton téléphone. Installe l’application une seule fois, puis touche « Ouvrir et associer » : la connexion est automatique.">
 <meta name="theme-color" content="#0b6e4f">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="KIDS PROTECTOR">
 <meta property="og:title" content="Ton parent t’invite 🛡️">
-<meta property="og:description" content="Active KIDS PROTECTOR sur ton téléphone : un seul bouton, c’est automatique.">
+<meta property="og:description" content="Active KIDS PROTECTOR sur ton téléphone : installe une fois, puis ouvre et associe.">
 <meta property="og:image" content="https://fallsync.github.io/kids-protector-join/preview.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -28,6 +28,8 @@
   .muted { color:var(--muted); font-size:.92rem; }
   .code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size:1.35rem; letter-spacing:.08em; padding:10px 12px; border:1px dashed var(--line); border-radius:10px; text-align:center; user-select:all; }
   button, a.btn { display:block; width:100%; box-sizing:border-box; text-align:center; background:var(--accent); color:#fff; border:0; border-radius:12px; padding:15px; font-size:1.05rem; font-weight:700; text-decoration:none; cursor:pointer; margin-top:14px; }
+  a.btn.alt { background:transparent; color:var(--accent); border:2px solid var(--accent); }
+  .step { font-weight:700; margin:18px 0 0; }
   a.link { display:block; text-align:center; margin-top:14px; color:var(--accent); }
   ol { padding-inline-start:20px; line-height:1.55; }
   .warn { color:#b3261e; }
@@ -49,8 +51,11 @@
   <div class="card">
     <div id="codeBox" class="code" hidden></div>
     <p id="noCode" class="warn" hidden></p>
+    <p id="s1" class="step"></p>
+    <a id="install" class="btn alt" href="#" hidden></a>
+    <p id="s2" class="step"></p>
     <button id="go" type="button"></button>
-    <a id="dl" class="link" href="#" hidden></a>
+    <p id="inapp" class="warn" hidden></p>
     <p id="status" class="muted" aria-live="polite"></p>
   </div>
   <div class="card">
@@ -85,6 +90,14 @@ function buildIntentUrl(code, fallbackUrl) {
     '#Intent;scheme=kidsprotector;package=com.kidsprotector.kids_protector;S.browser_fallback_url=' +
     encodeURIComponent(fallbackUrl) + ';end';
 }
+function buildMissingUrl(href) {
+  var h = String(href || '');
+  var i = h.indexOf('#');
+  var base = (i >= 0 ? h.slice(0, i) : h).split('?')[0];
+  return base + '?app=missing' + (i >= 0 ? h.slice(i) : '');
+}
+function isMissingFlag(search) { return /(^|[?&])app=missing(&|$)/.test(String(search || '')); }
+function isInAppBrowser(ua) { return /FBAN|FBAV|FB_IAB|Messenger|Instagram|Line\/|Snapchat|MicroMessenger/i.test(String(ua || '')); }
 function clipboardText(code) { return 'KIDS PROTECTOR ' + code; }
 function pickLang(language) {
   var l = String(language || 'fr').slice(0, 2).toLowerCase();
@@ -93,18 +106,24 @@ function pickLang(language) {
 // --- fin logique pure ---
 
 var T = {
-  fr: { title: "Ton parent t’invite 🛡️", intro: "Un seul bouton : l’application s’installe et se connecte automatiquement à ton parent.",
-    go: "Installer et associer", dl: "Télécharger seulement l'application", noCode: "Ce lien ne contient pas de code. Demande à ton parent de te renvoyer le lien depuis l'application.",
-    stepsTitle: "Ce qui va se passer", steps: ["Appuie sur le bouton vert : le code est copié et le téléchargement commence.", "Ouvre le fichier téléchargé et accepte l'installation (Android peut demander d'autoriser ce navigateur à installer des applications).", "Ouvre KIDS PROTECTOR : appuie sur « Accepter » pour terminer l'association."],
-    copied: "Code copié. Téléchargement en cours…", androidOnly: "Ouvre ce lien depuis le téléphone Android de l'enfant.", privacy: "Le code reste dans ton téléphone : il n'est pas envoyé à ce site.", prep: "Préparation…" },
-  en: { title: "Your parent invites you 🛡️", intro: "One button: the app installs and connects to your parent automatically.",
-    go: "Install and pair", dl: "Only download the app", noCode: "This link has no code. Ask your parent to send the link again from the app.",
-    stepsTitle: "What will happen", steps: ["Tap the green button: the code is copied and the download starts.", "Open the downloaded file and allow the installation (Android may ask you to allow this browser to install apps).", "Open KIDS PROTECTOR and tap “Accept” to finish pairing."],
-    copied: "Code copied. Downloading…", androidOnly: "Open this link on the child's Android phone.", privacy: "The code stays on your phone: it is not sent to this site.", prep: "Preparing…" },
-  ar: { title: "والدك يدعوك 🛡️", intro: "زر واحد: يُثبَّت التطبيق ويرتبط بوالدك تلقائياً.",
-    go: "تثبيت وربط", dl: "تحميل التطبيق فقط", noCode: "هذا الرابط لا يحتوي على رمز. اطلب من والدك إرسال الرابط من التطبيق.",
-    stepsTitle: "ما الذي سيحدث", steps: ["اضغط الزر الأخضر: يُنسخ الرمز ويبدأ التحميل.", "افتح الملف الذي تم تحميله ووافق على التثبيت (قد يطلب أندرويد السماح لهذا المتصفح بتثبيت التطبيقات).", "افتح KIDS PROTECTOR واضغط «قبول» لإنهاء الربط."],
-    copied: "تم نسخ الرمز. جارٍ التحميل…", androidOnly: "افتح هذا الرابط من هاتف الطفل (أندرويد).", privacy: "يبقى الرمز على هاتفك ولا يُرسل إلى هذا الموقع.", prep: "جارٍ التحضير…" },
+  fr: { title: "Ton parent t’invite 🛡️", intro: "Installe l’application une seule fois, puis touche « Ouvrir et associer ». La connexion est automatique.",
+    s1: "1. Installer (une seule fois)", install: "Télécharger l’application", s2: "2. Ouvrir et associer (déjà installée ? commence ici)", go: "Ouvrir et associer",
+    noCode: "Ce lien ne contient pas de code. Demande à ton parent de te renvoyer le lien depuis l'application.",
+    stepsTitle: "Ce qui va se passer", steps: ["Étape 1 : télécharge puis installe l'application (Android peut demander d'autoriser ce navigateur à installer des applications). À faire une seule fois.", "Étape 2 : reviens sur ce lien et touche « Ouvrir et associer » : l'application s'ouvre avec le code.", "Dans l'application, appuie sur « Accepter » pour terminer. Si ton parent régénère un lien, il suffit de refaire l'étape 2, sans réinstaller."],
+    copied: "Ouverture de l’application…", missing: "L’application n’est pas encore installée sur ce téléphone. Fais d’abord l’étape 1, puis reviens sur ce lien.", inapp: "Ce navigateur intégré bloque l’ouverture de l’application. Ouvre ce lien dans Chrome (menu ⋮ puis « Ouvrir dans le navigateur »).",
+    androidOnly: "Ouvre ce lien depuis le téléphone Android de l'enfant.", privacy: "Le code reste dans ton téléphone : il n'est pas envoyé à ce site." },
+  en: { title: "Your parent invites you 🛡️", intro: "Install the app once, then tap “Open and pair”. The connection is automatic.",
+    s1: "1. Install (only once)", install: "Download the app", s2: "2. Open and pair (already installed? start here)", go: "Open and pair",
+    noCode: "This link has no code. Ask your parent to send the link again from the app.",
+    stepsTitle: "What will happen", steps: ["Step 1: download and install the app (Android may ask you to allow this browser to install apps). Only once.", "Step 2: come back to this link and tap “Open and pair”: the app opens with the code.", "In the app, tap “Accept” to finish. If your parent makes a new link, just redo step 2, no reinstall."],
+    copied: "Opening the app…", missing: "The app is not installed on this phone yet. Do step 1 first, then come back to this link.", inapp: "This built-in browser blocks opening the app. Open this link in Chrome (⋮ menu, then “Open in browser”).",
+    androidOnly: "Open this link on the child's Android phone.", privacy: "The code stays on your phone: it is not sent to this site." },
+  ar: { title: "والدك يدعوك 🛡️", intro: "ثبّت التطبيق مرة واحدة ثم اضغط «فتح وربط». الاتصال تلقائي.",
+    s1: "1. التثبيت (مرة واحدة فقط)", install: "تحميل التطبيق", s2: "2. فتح وربط (مثبّت مسبقاً؟ ابدأ من هنا)", go: "فتح وربط",
+    noCode: "هذا الرابط لا يحتوي على رمز. اطلب من والدك إرسال الرابط من التطبيق.",
+    stepsTitle: "ما الذي سيحدث", steps: ["الخطوة 1: حمّل التطبيق وثبّته (قد يطلب أندرويد السماح لهذا المتصفح بتثبيت التطبيقات). مرة واحدة فقط.", "الخطوة 2: عد إلى هذا الرابط واضغط «فتح وربط»: يفتح التطبيق مع الرمز.", "في التطبيق اضغط «قبول» للإنهاء. إذا أنشأ والدك رابطاً جديداً فكرّر الخطوة 2 فقط دون إعادة التثبيت."],
+    copied: "جارٍ فتح التطبيق…", missing: "التطبيق غير مثبّت على هذا الهاتف بعد. نفّذ الخطوة 1 أولاً ثم عد إلى هذا الرابط.", inapp: "هذا المتصفح المدمج يمنع فتح التطبيق. افتح الرابط في Chrome (قائمة ⋮ ثم «فتح في المتصفح»).",
+    androidOnly: "افتح هذا الرابط من هاتف الطفل (أندرويد).", privacy: "يبقى الرمز على هاتفك ولا يُرسل إلى هذا الموقع." },
 };
 
 (function () {
@@ -114,6 +133,7 @@ var T = {
   if (lang === 'ar') document.documentElement.dir = 'rtl';
   var $ = function (id) { return document.getElementById(id); };
   $('title').textContent = t.title; $('intro').textContent = t.intro; $('go').textContent = t.go;
+  $('s1').textContent = t.s1; $('s2').textContent = t.s2; $('install').textContent = t.install;
   $('stepsTitle').textContent = t.stepsTitle; $('privacy').textContent = t.privacy;
   t.steps.forEach(function (s) { var li = document.createElement('li'); li.textContent = s; $('steps').appendChild(li); });
 
@@ -122,16 +142,18 @@ var T = {
   var apkUrl = repo ? 'https://github.com/' + repo.owner + '/' + repo.repo + '/releases/latest' : null;
   var isAndroid = /android/i.test(navigator.userAgent);
 
-  if (!code) { $('noCode').textContent = t.noCode; $('noCode').hidden = false; $('go').hidden = true; }
+  if (!code) { $('noCode').textContent = t.noCode; $('noCode').hidden = false; $('go').hidden = true; $('s2').hidden = true; }
+  if (isMissingFlag(location.search)) $('status').textContent = t.missing;
+  if (isInAppBrowser(navigator.userAgent)) { $('inapp').textContent = t.inapp; $('inapp').hidden = false; }
   // Le code reste dans le lien : il n'est pas affiché (message rassurant, pas de jargon).
 
+  $('install').href = apkUrl || '#'; $('install').hidden = !apkUrl;
   if (repo) {
-    $('status').textContent = t.prep;
     fetch('https://api.github.com/repos/' + repo.owner + '/' + repo.repo + '/releases/latest')
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (rel) { var u = pickApkAsset(rel); if (u) apkUrl = u; })
       .catch(function () {})
-      .then(function () { $('status').textContent = ''; $('dl').href = apkUrl; $('dl').textContent = t.dl; $('dl').hidden = false; });
+      .then(function () { $('install').href = apkUrl; $('install').hidden = false; });
   }
 
   function copy(text) {
@@ -143,13 +165,16 @@ var T = {
     document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) {} document.body.removeChild(ta);
   }
 
+  // Étape 1 : le code est aussi copié, au cas où l'application le lirait au premier lancement.
+  $('install').addEventListener('click', function () { if (code) copy(clipboardText(code)); });
+
+  // Étape 2 : application déjà installée -> elle s'ouvre avec le code. Sinon retour ici avec un message.
   $('go').addEventListener('click', function () {
     if (!code) return;
     if (!isAndroid) { $('status').textContent = t.androidOnly; return; }
     copy(clipboardText(code)).then(function () {
       $('status').textContent = t.copied;
-      // Application déjà installée : elle s'ouvre avec le code. Sinon : téléchargement de l'application.
-      location.href = buildIntentUrl(code, apkUrl || location.href);
+      location.href = buildIntentUrl(code, buildMissingUrl(location.href));
     });
   });
 })();
